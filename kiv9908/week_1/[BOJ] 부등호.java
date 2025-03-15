@@ -1,55 +1,51 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
-public class B_2529 {
-    static int k;
+public class Main {
+    static int K;
     static char[] eq;
-    static long min = Long.MAX_VALUE;
-    static long max = 0;
-    static String minStr = "";
-    static String maxStr = "";
+    static boolean[] visited = new boolean[10]; // 숫자 사용 여부 체크
+    static List<String> results = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        k = Integer.parseInt(br.readLine());
-        eq = new char[k];
+        K = Integer.parseInt(br.readLine()); // 부등호 개수
+        eq = new char[K];
+
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < k; i++) {
-            eq[i] = st.nextToken().charAt(0);
+        for (int i = 0; i < K; i++) {
+            eq[i] = st.nextToken().charAt(0); // 부등호 입력
         }
 
-        for (int n = 0; n <= 9; n++) {
-            ArrayList<Integer> arr = new ArrayList<>();
-            arr.add(n);
-            dfs(n, 0, arr);
+        // 0~9 숫자 중 하나씩 선택해 DFS 시작
+        for (int i = 0; i < 10; i++) {
+            visited[i] = true;
+            dfs(0, i, String.valueOf(i)); // 깊이 0부터 시작
+            visited[i] = false;
         }
-        System.out.println(maxStr + "\n" + minStr);
+
+        // 결과 리스트 정렬 후 출력 (최소, 최대)
+        Collections.sort(results);
+        System.out.println(results.get(results.size() - 1)); // 최대값
+        System.out.println(results.get(0)); // 최소값
     }
 
-    public static void dfs(int n, int idx, ArrayList<Integer> arr) {
-        if (idx == k) {
-            StringBuilder sb = new StringBuilder();
-            for (int num : arr) {
-                sb.append(num);
-            }
-            long result = Long.parseLong(sb.toString());
-            min = Math.min(min, result);
-            minStr = min == result ? sb.toString() : minStr;
-            max = Math.max(max, result);
-            maxStr = max == result ? sb.toString() : maxStr;
+    // depth: 현재 단계, num: 현재까지 만든 숫자 문자열
+    public static void dfs(int depth, int prev, String num) {
+        if (depth == K) { // 모든 자리 선택 완료
+            results.add(num);
             return;
         }
 
-        for (int i = 0; i <= 9; i++) {
-            if (arr.contains(i)) continue;
-            if (eq[idx] == '>' && n < i) continue;
-            if (eq[idx] == '<' && n > i) continue;
-            arr.add(i);
-            dfs(i, idx + 1, arr);
-            arr.remove(arr.size() - 1);
+        for (int i = 0; i < 10; i++) {
+            if (!visited[i]) {
+                // 부등호 조건 체크
+                if ((eq[depth] == '<' && prev < i) || (eq[depth] == '>' && prev > i)) {
+                    visited[i] = true;
+                    dfs(depth + 1, i, num + i);
+                    visited[i] = false;
+                }
+            }
         }
     }
 }
