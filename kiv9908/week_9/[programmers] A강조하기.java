@@ -6,7 +6,6 @@ class Solution {
         		answer+=String.valueOf(myString.charAt(i)).toUpperCase();
         	}else if(!"A".equals(""+myString.charAt(i))) {
         		answer+=(""+myString.charAt(i)).toLowerCase();
-        		
         	}
         	
         	else {
