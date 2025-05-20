@@ -6,7 +6,6 @@ class Solution {
         for(int i = 0 ;i<names.length;i+=5) {
         	answer[index++]=names[i];
         }
-        
         return answer;
     }
 }
